@@ -13,12 +13,13 @@ dependencies {
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 
-    implementation("com.zaxxer:HikariCP:5.0.1")
-    implementation("mysql:mysql-connector-java:8.0.33")
-    implementation("com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.13.1")
-
-    implementation("org.slf4j:slf4j-api:2.0.9")
-    implementation("org.slf4j:slf4j-simple:2.0.9")
+//    implementation("com.zaxxer:HikariCP:5.0.1")
+//    implementation("mysql:mysql-connector-java:8.0.33")
+//    implementation("com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.13.1")
+//
+//    implementation("org.slf4j:slf4j-api:2.0.9")
+//    implementation("org.slf4j:slf4j-simple:2.0.9")
+    implementation("com.microsoft.sqlserver:mssql-jdbc:12.4.1.jre11")
 }
 
 tasks.test {

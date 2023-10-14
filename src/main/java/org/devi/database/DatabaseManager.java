@@ -1,7 +1,6 @@
 package org.devi.database;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
 import org.devi.views.Warn;
 
 import javax.sql.DataSource;
@@ -10,15 +9,6 @@ import java.sql.Statement;
 
 public class DatabaseManager {
     private static DataSource dataSource = null;
-
-//    static {
-//        try {
-//            dataSource = CloudSqlConnectionPoolFactory.createDataSource();
-//        } catch (Exception e) {
-//            Warn.debugMessage(e.getMessage());
-//            dataSource = null;
-//        }
-//    }
 
     public static Connection getConnection() throws Exception {
         if (dataSource == null) dataSource = CloudSqlConnectionPoolFactory.createDataSource();
@@ -38,27 +28,23 @@ public class DatabaseManager {
 
 
 class CloudSqlConnectionPoolFactory {
-    private static final String INSTANCE_CONNECTION_NAME = "shaped-shuttle-401611:asia-southeast1:demo-sql-app";
-    private static final String DB_USER = "root";
-    private static final String DB_PASS = "";
+    private static final String DB_USER = "applogin";
+    private static final String DB_PASS = "d2sd$asdAsaAQ";
     private static final String DB_NAME = "online_shopping";
+    private static final String SERVER_NAME = "devi-server.database.windows.net";
+    private static final int PORT = 1433;
+    private static final int TIMEOUT = 2; // in seconds
 
 
     protected static DataSource createDataSource() {
-        final HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(String.format("jdbc:mysql:///%s", DB_NAME));
-        config.setUsername(DB_USER);
-        config.setPassword(DB_PASS);
-
-        config.addDataSourceProperty("socketFactory", "com.google.cloud.sql.mysql.SocketFactory");
-        config.addDataSourceProperty("cloudSqlInstance", INSTANCE_CONNECTION_NAME);
-
-        config.addDataSourceProperty("ipTypes", "PUBLIC,PRIVATE");
-        config.setConnectionTimeout(1500);
-        config.setIdleTimeout(600000);
-        config.setMaxLifetime(30000);
-
-        return new HikariDataSource(config);
+        final SQLServerDataSource ds = new SQLServerDataSource();
+        ds.setUser(DB_USER);
+        ds.setPassword(DB_PASS);
+        ds.setServerName(SERVER_NAME);
+        ds.setPortNumber(PORT);
+        ds.setDatabaseName(DB_NAME);
+        ds.setQueryTimeout(TIMEOUT);
+        return ds;
     }
 }
 
@@ -75,7 +61,8 @@ class TablesDb {
 
     public static void createAdminTable() {
         createTable("""
-                CREATE TABLE IF NOT EXISTS admins (
+                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='admins' AND xtype='U')
+                CREATE TABLE admins (
                 	username VARCHAR(255) PRIMARY KEY NOT NULL,
                 	password VARCHAR(255) NOT NULL
                 )
@@ -84,7 +71,8 @@ class TablesDb {
 
     public static void createUserTable() {
         createTable("""
-                CREATE TABLE IF NOT EXISTS users (
+                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='users' AND xtype='U')
+                CREATE TABLE users (
                 	username VARCHAR(255) PRIMARY KEY NOT NULL,
                 	password VARCHAR(255) NOT NULL,
                 	balance INT NOT NULL
@@ -94,7 +82,8 @@ class TablesDb {
 
     public static void createCartTable() {
         createTable("""
-                CREATE TABLE IF NOT EXISTS cart (
+                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='cart' AND xtype='U')
+                CREATE TABLE cart (
                 	username VARCHAR(255) NOT NULL,
                 	product_key INT NOT NULL,
                 	product_name VARCHAR(255) NOT NULL,
@@ -105,7 +94,8 @@ class TablesDb {
 
     public static void createProductTable() {
         createTable("""
-                CREATE TABLE IF NOT EXISTS products (
+                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='products' AND xtype='U')
+                CREATE TABLE products (
                 	product_key INT PRIMARY KEY NOT NULL,
                 	product_name VARCHAR(255) NOT NULL,
                 	product_price INT NOT NULL
@@ -115,7 +105,8 @@ class TablesDb {
 
     public static void createPurchasedTable() {
         createTable("""
-                CREATE TABLE IF NOT EXISTS purchased (
+                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='purchased' AND xtype='U')
+                CREATE TABLE purchased (
                 	username VARCHAR(255) NOT NULL,
                 	product_key INT NOT NULL,
                 	product_name VARCHAR(255) NOT NULL,
