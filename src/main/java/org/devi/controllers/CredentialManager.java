@@ -1,4 +1,4 @@
-package org.devi. controllers;
+package org.devi.controllers;
 
 import org.devi.database.UserDb;
 import org.devi.interfaces.Credential;
@@ -65,6 +65,11 @@ public class CredentialManager {
     public boolean isUSerAlreadyExist(String username) {
         final UserDb userDb = new UserDb();
         return userDb.isUserAlreadyExist(username);
+    }
+
+    public static void refreshLoggedUser() {
+        final UserDb userDb = new UserDb();
+        CredentialManager.loggedUser = userDb.getUser(CredentialManager.loggedUser);
     }
 
     public static User getLoggedInUser() {

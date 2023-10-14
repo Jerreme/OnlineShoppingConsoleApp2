@@ -1,4 +1,4 @@
-package org.devi. controllers;
+package org.devi.controllers;
 
 import org.devi.interfaces.UserBalanceException;
 import org.devi.models.User;

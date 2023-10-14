@@ -1,4 +1,4 @@
-package org.devi. routes;
+package org.devi.routes;
 
 import org.devi.controllers.CredentialManager;
 import org.devi.controllers.Navigator;
@@ -9,6 +9,12 @@ import org.devi.views.ProfilePageView;
 
 
 public class ProfilePage implements Route {
+    @Override
+    public void init() {
+        Route.super.init();
+        CredentialManager.refreshLoggedUser();
+    }
+
     @Override
     public void build() {
         ProfilePageView view = new ProfilePageView();
