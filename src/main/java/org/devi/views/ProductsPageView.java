@@ -31,7 +31,7 @@ public class ProductsPageView extends Messenger {
             else print(formatted + " ".repeat(count));
             i++;
         }
-        newLine();
+//        newLine();
     }
 
     public void askForOrder(int productsCount) {
@@ -43,11 +43,15 @@ public class ProductsPageView extends Messenger {
     }
 
     public void showProductNotFound() {
-        systemMessage("Product not found!");
+        systemMessage("Product/s not found!");
     }
 
-    public void showAddedToCart(Product product) {
-        systemMessage(String.format("%s has been added to cart ✓", product.productName()));
+    public void showAddedToCart(ArrayList<Product> products) {
+        for (Product product : products) {
+            final String name = product.productName();
+            println(String.format(" ✓ %s", name));
+        }
+        systemMessage("Product/s has been added to cart ✓");
     }
 
     public void showCartItems(ArrayList<Product> cartItems) {

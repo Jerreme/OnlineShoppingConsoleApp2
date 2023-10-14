@@ -33,16 +33,19 @@ public class CartDb {
         return products;
     }
 
-    public void addProductToCart(String username, Product product) {
+    public void addProductToCart(String username, ArrayList<Product> products) {
         String sql = "INSERT INTO cart(username, product_key, product_name, product_price) VALUES(?,?,?,?)";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);) {
-            pstmt.setString(1, username);
-            pstmt.setInt(2, product.key());
-            pstmt.setString(3, product.productName());
-            pstmt.setInt(4, product.price());
-            pstmt.executeUpdate();
+            for (Product product : products) {
+                pstmt.setString(1, username);
+                pstmt.setInt(2, product.key());
+                pstmt.setString(3, product.productName());
+                pstmt.setInt(4, product.price());
+                pstmt.addBatch();
+            }
+            pstmt.executeBatch();
         } catch (Exception e) {
             Warn.databaseError(e);
         }

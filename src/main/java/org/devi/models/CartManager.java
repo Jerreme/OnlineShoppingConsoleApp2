@@ -1,4 +1,4 @@
-package org.devi. models;
+package org.devi.models;
 
 import org.devi.controllers.CredentialManager;
 import org.devi.database.CartDb;
@@ -15,11 +15,11 @@ public class CartManager {
         return cartItems;
     }
 
-    public static void addToCart(String username, Product product) {
-        cartItems.add(product);
+    public static void addToCart(String username, ArrayList<Product> products) {
+        cartItems.addAll(products);
         // Add product to the database
         final CartDb cartDb = new CartDb();
-        cartDb.addProductToCart(username, product);
+        cartDb.addProductToCart(username, products);
     }
 
     public static void emptyCart() {

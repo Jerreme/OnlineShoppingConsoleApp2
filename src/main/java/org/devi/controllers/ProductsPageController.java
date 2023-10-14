@@ -1,4 +1,4 @@
-package org.devi. controllers;
+package org.devi.controllers;
 
 import org.devi.database.PurchasedDb;
 import org.devi.interfaces.ExitCode;
@@ -29,19 +29,24 @@ public class ProductsPageController {
     }
 
     public void addToCart() {
-        int productId = promptProductId();
-        if (productId == 0) {
+        ArrayList<Integer> productId = promptProductIds();
+        if (productId.size() == 1 && productId.get(0) == 0) {
             Navigator.rebuildActiveRoute();
             return;
         }
 
-        final Product product = ProductsManager.getProductById(productId);
-        if (product == null) {
+        final ArrayList<Product> products = new ArrayList<>();
+        for (int id : productId) {
+            final Product product = ProductsManager.getProductById(id);
+            if (product != null) products.add(product);
+        }
+
+        if (products.isEmpty()) {
             view.showProductNotFound();
         } else {
             final String username = CredentialManager.getLoggedInUser().username();
-            CartManager.addToCart(username, product);
-            view.showAddedToCart(product);
+            CartManager.addToCart(username, products);
+            view.showAddedToCart(products);
         }
         Navigator.rebuildActiveRoute();
     }
@@ -67,17 +72,29 @@ public class ProductsPageController {
         Navigator.rebuildActiveRoute();
     }
 
-    private int promptProductId() {
+    private ArrayList<Integer> promptProductIds() {
         final Scanner scanner = new Scanner(System.in);
         view.askForOrder(ProductsManager.getProducts().size());
-        int productId;
+        ArrayList<Integer> productIds = new ArrayList<>();
         try {
-            productId = scanner.nextInt();
+            final String input = scanner.nextLine();
+            final String[] inputArray = input.split(",");
+
+            if (inputArray.length == 1 && inputArray[0].trim().equals("0")) {
+                productIds.add(0);
+                return productIds;
+            }
+
+            for (String s : inputArray) {
+                if (s.trim().isEmpty()) continue;
+                final int parsedId = Integer.parseInt(s.trim());
+                if (parsedId > 0) productIds.add(parsedId);
+            }
         } catch (Exception e) {
             Warn.invalidInput();
-            productId = promptProductId();
+            productIds = promptProductIds();
         }
-        return productId;
+        return productIds;
     }
 
     private void placeOrder() {
